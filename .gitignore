@@ -1,0 +1,16 @@
+dist/
+.DS_Store
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+/image_2
+# Keep local source footage and retired renders out of the website repository.
+/public/assets/*-source.mov
+/public/assets/*-source.mp4
+/public/assets/x7-scroll-final.mp4
+/public/assets/x7-scroll-final-new.mp4
+/public/assets/x7-scroll-clean.mp4
+/public/assets/x7-scroll-final-web
+/public/assets/tangkas-studio-original.mp4

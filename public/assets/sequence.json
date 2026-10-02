@@ -1,0 +1,17 @@
+{
+  "count": 145,
+  "poster": "assets/frames/frame-0018.webp",
+  "pattern": "assets/frames/frame-{index}.webp",
+  "width": 1280,
+  "height": 720,
+  "fps": 18,
+  "duration": 8.04,
+  "status": "ready",
+  "totalBytes": 5867558,
+  "startFrame": 18,
+  "mobilePattern": "assets/frames-mobile/frame-{index}.webp",
+  "mobileWidth": 768,
+  "mobileHeight": 432,
+  "mobileStep": 2,
+  "mobileTotalBytes": 1212704
+}
