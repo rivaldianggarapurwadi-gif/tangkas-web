@@ -36,7 +36,7 @@ function experience(root) {
   const nav = all('.header > .brand, .header nav a, .header .nav-actions > *');
   const supporting = all('.hero-actions, .vehicle-caption, .hero-bottom, .media-note');
   let intro, scroll, lenis, disposed = false, complete = false, staticFallback = false;
-  let loadingTimeout, sequence, heroVideo;
+  let loadingTimeout, sequence, heroVideo, cleanupVideo = () => {};
   const original = [$('#chapter-eyebrow').innerHTML, $('#chapter-title').innerHTML, $('#chapter-body').innerHTML];
   const previousOverflow = document.documentElement.style.overflow;
   const progressLine = root.querySelector('.intro-progress i');
@@ -81,14 +81,41 @@ function experience(root) {
     heroVideo.style.zIndex = '2';
     if (!heroVideo.src) heroVideo.src = 'assets/tngks-scroll.mp4';
     if (!heroVideo.parentNode) media.appendChild(heroVideo);
-    heroVideo.removeAttribute('poster');
+    // iOS may preload metadata without decoding a frame. A muted play request
+    // primes the decoder; the first decoded frame is then paused for scrubbing.
+    const video = heroVideo;
+    video.defaultMuted = true;
+    video.setAttribute('muted', '');
+    video.setAttribute('playsinline', '');
+    let priming = false, primed = false;
+    const pauseReady = () => {
+      if (disposed || heroVideo !== video) return;
+      video.pause(); primed = true; priming = false;
+      seekVideo(scroll?.progress() || 0);
+    };
+    const prime = () => {
+      if (disposed || primed || priming || heroVideo !== video) return;
+      priming = true;
+      const playing = video.play();
+      playing?.then(pauseReady).catch(() => { priming = false; });
+    };
+    video.addEventListener('loadeddata', pauseReady);
+    document.addEventListener('touchstart', prime, {passive: true});
+    document.addEventListener('pointerdown', prime, {passive: true});
     let requestedTime = 0;
     const smoothSeek = () => {
-      if (!heroVideo || disposed || heroVideo.seeking || heroVideo.readyState < 2) return;
+      if (!heroVideo || disposed || heroVideo.seeking || heroVideo.readyState < 1) return;
       const distance = requestedTime - heroVideo.currentTime;
       if (Math.abs(distance) > 0.008) heroVideo.currentTime += distance * 0.18;
     };
     gsap.ticker.add(smoothSeek);
+    cleanupVideo = () => {
+      gsap.ticker.remove(smoothSeek);
+      video.removeEventListener('loadeddata', pauseReady);
+      document.removeEventListener('touchstart', prime);
+      document.removeEventListener('pointerdown', prime);
+      video.pause();
+    };
     const seekVideo = progress => {
       if (!heroVideo || !Number.isFinite(heroVideo.duration) || heroVideo.duration <= 0) return false;
       const target = Math.max(0, Math.min(heroVideo.duration - 0.001, progress * heroVideo.duration));
@@ -121,9 +148,11 @@ function experience(root) {
       if (disposed || sequence) return;
       fetch('assets/sequence.json').then(response => response.json()).then(manifest => {
         if (!disposed) {
-          heroVideo?.remove(); heroVideo = null;
+          cleanupVideo(); heroVideo?.remove(); heroVideo = null;
+          const canvas = document.createElement('canvas');
+          canvas.id = 'sequence'; media.appendChild(canvas);
           sequence = createSequence(manifest, stage, mobile);
-          sequence.seek(scroll?.progress || 0);
+          sequence.seek(scroll?.progress() || 0);
         }
       }).catch(() => {});
     }, {once: true});
@@ -131,6 +160,7 @@ function experience(root) {
       if (scroll?.scrollTrigger) seekVideo(scroll.scrollTrigger.progress);
     }, {once: true});
     if (heroVideo.readyState >= 1) seekVideo(scroll.progress());
+    prime();
   }
   function finish() {
     if (complete || disposed) return;
@@ -143,6 +173,7 @@ function experience(root) {
     staticFallback = true;
     intro?.kill(); scroll?.scrollTrigger?.kill(); scroll?.kill(); scroll = null;
     lenis?.destroy(); lenis = null; gsap.ticker.remove(clock);
+    cleanupVideo();
     complete = true; sequence?.destroy(); sequence = null; heroVideo?.remove(); heroVideo = null; finalState();
     gsap.set(['.x7-front', '.x7-side', '.hero-bottom', '.vehicle-caption'], {clearProps: 'all'});
     document.body.dataset.introState = 'static';
@@ -155,7 +186,7 @@ function experience(root) {
   $('.skip').addEventListener('click', skip);
   root.querySelector('button').addEventListener('click', skip);
   [$('#chapter-eyebrow'), $('#chapter-title'), $('#chapter-body')].forEach(el => lines(el));
-  if (reduced.matches || location.hash || scrollY > 100 || window.introTimedOut) {
+  if (reduced.matches || window.introTimedOut) {
     staticMode();
   } else if (!reduced.matches) {
     // Open directly on the actual video composition, without the poster reveal.
