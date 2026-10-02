@@ -2,7 +2,10 @@ import http from 'node:http';
 import {createReadStream} from 'node:fs';
 import {readFile,stat} from 'node:fs/promises';
 import path from 'node:path';
-const root=path.resolve('public');
+const production=process.env.NODE_ENV==='production';
+const root=path.resolve(production?'dist':'public');
+const port=Number(process.env.PORT)||4173;
+const host=process.env.HOST||(production?'0.0.0.0':'127.0.0.1');
 const types={'.html':'text/html','.css':'text/css','.js':'text/javascript','.json':'application/json','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp','.svg':'image/svg+xml','.ttf':'font/ttf','.mp4':'video/mp4'};
 http.createServer(async(req,res)=>{
   try {
@@ -29,4 +32,4 @@ http.createServer(async(req,res)=>{
     res.on('close',()=>stream.destroy());
     stream.pipe(res);
   }catch{res.writeHead(404);res.end('Not found');}
-}).listen(4173,'127.0.0.1',()=>console.log('Tangkas preview: http://127.0.0.1:4173'));
+}).listen(port,host,()=>console.log(`Tangkas ${production?'production':'preview'}: http://${host}:${port}`));

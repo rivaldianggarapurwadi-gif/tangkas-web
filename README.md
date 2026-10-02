@@ -21,6 +21,10 @@ npm run build
 
 `dist/` is the self-contained static website output. Serve it through a static host if publishing is subsequently authorized.
 
+## Railway deployment
+
+Connect the repository to Railway. Railpack runs `npm run build`, then starts the site with `npm start`. In production, the server serves `dist/` and listens on Railway's `PORT` at `0.0.0.0`. No custom start command or port variable is needed in Railway settings. A local production check is `npm run build && NODE_ENV=production PORT=4174 npm start`.
+
 ## Edit
 
 - `public/content.js`: brand, hero chapters, products, branch records, source links.
