@@ -172,3 +172,17 @@ html.lenis,html.lenis body{height:auto}
  .cinematic-home .hero-actions{margin-top:0}
  .cinematic-home .scroll-line{height:18px}
 }
+
+/* Compact desktop composition: copy left, motorcycle right, one white stage. */
+@media(max-width:760px){
+ .cinematic-home .hero-media{left:32%;width:78%;height:100%;inset-block:0}
+ .cinematic-home #sequence{object-fit:cover;object-position:58% center}
+ .cinematic-home .stage::after{background:linear-gradient(90deg,#fff 0%,#fff 29%,rgba(255,255,255,.88) 43%,rgba(255,255,255,.2) 65%,transparent 78%)}
+ .cinematic-home .hero-copy{inset:auto auto 20% 6%;width:51%}
+ .cinematic-home .hero-copy h1{font-size:clamp(29px,7.9vw,48px);line-height:1.03;letter-spacing:-.025em}
+ .cinematic-home .hero-copy .eyebrow{font-size:7px;letter-spacing:1px;line-height:1.6}
+ .cinematic-home .hero-description{font-size:12px;line-height:1.5}
+ .cinematic-home .hero-description br{display:none}
+ .cinematic-home .hero-actions{align-items:flex-start;flex-direction:column;gap:0}
+ .cinematic-home .hero-bottom{bottom:30px}
+}

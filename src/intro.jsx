@@ -79,7 +79,8 @@ function experience(root) {
     heroVideo.playsInline = true;
     heroVideo.preload = 'auto';
     heroVideo.style.zIndex = '2';
-    if (!heroVideo.src) heroVideo.src = 'assets/tngks-scroll.mp4';
+    const videoSource = mobile.matches ? 'assets/tngks-scroll-mobile.mp4' : 'assets/tngks-scroll.mp4';
+    if (heroVideo.getAttribute('src') !== videoSource) heroVideo.src = videoSource;
     if (!heroVideo.parentNode) media.appendChild(heroVideo);
     // iOS may preload metadata without decoding a frame. A muted play request
     // primes the decoder; the first decoded frame is then paused for scrubbing.
@@ -102,11 +103,16 @@ function experience(root) {
     video.addEventListener('loadeddata', pauseReady);
     document.addEventListener('touchstart', prime, {passive: true});
     document.addEventListener('pointerdown', prime, {passive: true});
-    let requestedTime = 0;
+    let requestedTime = 0, lastSeek = 0;
     const smoothSeek = () => {
       if (!heroVideo || disposed || heroVideo.seeking || heroVideo.readyState < 1) return;
       const distance = requestedTime - heroVideo.currentTime;
-      if (Math.abs(distance) > 0.008) heroVideo.currentTime += distance * 0.18;
+      const now = performance.now();
+      // ScrollTrigger already smooths progress. Seek once to the latest frame
+      // instead of repeatedly decoding intermediate frames on iPhone.
+      if (Math.abs(distance) >= 1 / 30 && now - lastSeek >= 32) {
+        heroVideo.currentTime = requestedTime; lastSeek = now;
+      }
     };
     gsap.ticker.add(smoothSeek);
     cleanupVideo = () => {
@@ -133,7 +139,7 @@ function experience(root) {
       if (!seekVideo(progress)) sequence?.seek(progress);
     }, scrollTrigger: {
       trigger: story, start: 'top top', end: () => `+=${innerHeight * (mobile.matches ? 1.7 : 2.6)}`,
-      pin: stage, scrub: 1, anticipatePin: 1, invalidateOnRefresh: true,
+      pin: stage, scrub: mobile.matches ? .35 : 1, anticipatePin: 1, invalidateOnRefresh: true,
     }});
     // Front close-up, existing three-quarter side angle, then full-bike reveal.
     scroll.to('.hero-bottom', {y: -20, opacity: 0, duration: .12}, .02)
