@@ -192,7 +192,7 @@ function experience(root) {
   $('.skip').addEventListener('click', skip);
   root.querySelector('button').addEventListener('click', skip);
   [$('#chapter-eyebrow'), $('#chapter-title'), $('#chapter-body')].forEach(el => lines(el));
-  if (reduced.matches || window.introTimedOut) {
+  if (document.body.classList.contains('hero-static') || reduced.matches || window.introTimedOut) {
     staticMode();
   } else if (!reduced.matches) {
     // Open directly on the actual video composition, without the poster reveal.

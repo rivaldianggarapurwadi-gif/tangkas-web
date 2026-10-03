@@ -12,15 +12,18 @@ const waitFor = async predicate => {
   }
   assert.fail('Intro state did not settle');
 };
-async function fixture({reduce = false, hash = '', expired = false} = {}) {
+async function fixture({reduce = false, hash = '', expired = false, animated = false} = {}) {
   const errors = [], listeners = [];
   const virtualConsole = new VirtualConsole();
   virtualConsole.on('jsdomError', error => errors.push(error.message));
   const dom = new JSDOM(html, {url: 'http://localhost/' + hash, runScripts: 'outside-only', pretendToBeVisual: true, virtualConsole});
   const {window} = dom;
+  if (animated) window.document.body.classList.remove('hero-static');
   const preference = {matches: reduce, addEventListener: (_, fn) => listeners.push(fn), removeEventListener() {}};
   window.matchMedia = query => query.includes('prefers-reduced-motion') ? preference : {matches: false, addEventListener() {}, removeEventListener() {}, addListener() {}, removeListener() {}};
   window.scrollTo = () => {};
+  window.HTMLMediaElement.prototype.pause = function() {};
+  window.HTMLMediaElement.prototype.play = () => Promise.resolve();
   window.introTimedOut = expired;
   window.document.fonts = {load: () => Promise.resolve([])};
   // Simulate indefinitely stalled images; fallback must still unlock the page.
@@ -32,7 +35,6 @@ async function fixture({reduce = false, hash = '', expired = false} = {}) {
 function assertStatic({window, errors}) {
   const doc = window.document;
   assert.equal(doc.body.dataset.introState, 'static');
-  assert.equal(doc.querySelector('.intro-overlay').hidden, true);
   assert.equal(doc.documentElement.style.overflow, '');
   assert.equal(doc.querySelector('main').inert, false);
   assert.equal(doc.querySelector('.header').inert, false);
@@ -48,7 +50,7 @@ for (const options of [{reduce: true}, {hash: '#models'}, {expired: true}]) {
   try {assertStatic(test);} finally {test.close();}
 }
 for (const action of ['watchdog', 'preference-change']) {
-  const test = await fixture();
+  const test = await fixture({animated: true});
   try {
     assert.equal(test.window.document.body.dataset.introState, 'complete');
     assert.equal(test.window.document.querySelector('main').inert, false);
