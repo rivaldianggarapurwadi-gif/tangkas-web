@@ -103,7 +103,22 @@ function experience(root) {
     document.addEventListener('touchstart', prime, {passive: true});
     document.addEventListener('pointerdown', prime, {passive: true});
     let requestedTime = 0;
+    const fitMobileFilm = () => {
+      if (!mobile.matches || !video.videoWidth || !video.videoHeight) {
+        video.style.removeProperty('--mobile-film-scale'); return;
+      }
+      // Begin with an immersive front view, then widen the same continuous
+      // shot to reveal the complete motorcycle. Use decoded time, not scroll
+      // target, so framing stays synchronized while Safari seeks.
+      const contain = Math.min(media.clientWidth / video.videoWidth, media.clientHeight / video.videoHeight);
+      const cover = Math.max(media.clientWidth / video.videoWidth, media.clientHeight / video.videoHeight);
+      const progress = Number.isFinite(video.duration) ? video.currentTime / video.duration : 0;
+      const reveal = Math.min(1, Math.max(0, (progress - .2) / .6));
+      const scale = contain > 0 ? 1 + (Math.min(cover / contain, 2.2) - 1) * (1 - reveal) : 1;
+      video.style.setProperty('--mobile-film-scale', scale.toFixed(4));
+    };
     const smoothSeek = () => {
+      fitMobileFilm();
       if (!heroVideo || disposed || heroVideo.seeking || heroVideo.readyState < 1) return;
       const distance = requestedTime - heroVideo.currentTime;
       if (Math.abs(distance) > 0.008) heroVideo.currentTime += distance * 0.18;
