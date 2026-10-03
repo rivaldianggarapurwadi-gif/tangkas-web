@@ -186,3 +186,32 @@ html.lenis,html.lenis body{height:auto}
  .cinematic-home .hero-actions{align-items:flex-start;flex-direction:column;gap:0}
  .cinematic-home .hero-bottom{bottom:30px}
 }
+
+/* Portrait phones: balanced crop, steady copy column, comfortable touch targets. */
+@media(max-width:760px) and (orientation:portrait){
+ .cinematic-home>.header{height:72px;padding-inline:5%;gap:12px}
+ .cinematic-home .header .brand{font-size:17px;letter-spacing:1.7px;gap:6px;flex-shrink:0}
+ .cinematic-home .header .brand small{font-size:6px;letter-spacing:2.8px}
+ .cinematic-home .header .brand-mark{width:33px;margin-right:0}
+ .cinematic-home .header .nav-actions{gap:8px}
+ .cinematic-home .header .button.small{padding:10px;font-size:10px;min-height:44px;white-space:nowrap}
+ .cinematic-home .menu-toggle{min-width:36px;min-height:44px;padding:4px}
+ .cinematic-home .hero-media{inset:14% auto auto 35%;width:74%;height:76%;mask-image:linear-gradient(180deg,transparent,#000 5%,#000 95%,transparent)}
+ .cinematic-home #sequence{object-position:57% center}
+ .cinematic-home .stage::after{background:linear-gradient(90deg,#fff 0%,#fff 28%,rgba(255,255,255,.94) 42%,rgba(255,255,255,.35) 59%,transparent 74%)}
+ .cinematic-home .hero-copy{left:6%;bottom:21%;width:54%;max-width:320px}
+ .cinematic-home .hero-copy h1{font-size:clamp(29px,8.1vw,48px);line-height:1.06;margin-bottom:16px}
+ .cinematic-home .hero-copy .eyebrow{max-width:24ch;font-size:8px;letter-spacing:1.15px;line-height:1.7;margin-bottom:16px}
+ .cinematic-home .hero-description{max-width:23ch;font-size:12px;line-height:1.65;margin-bottom:12px}
+ .cinematic-home .hero-actions{margin-top:12px;gap:4px}
+ .cinematic-home .hero-actions .button,.cinematic-home .hero-actions .text-button{min-height:44px;font-size:12px;padding:10px 0}
+ .cinematic-home .hero-bottom{bottom:max(26px,env(safe-area-inset-bottom));left:6%;right:6%}
+ .cinematic-home .scroll-cue{font-size:8px;letter-spacing:1.2px}
+}
+@media(max-width:760px) and (orientation:portrait) and (max-height:680px){
+ .cinematic-home .hero-copy{bottom:14%}
+ .cinematic-home .hero-copy h1{font-size:clamp(28px,7.8vw,34px);margin-bottom:10px}
+ .cinematic-home .hero-copy .eyebrow{margin-bottom:10px}
+ .cinematic-home .hero-description{line-height:1.5;margin-bottom:6px}
+ .cinematic-home .hero-actions{margin-top:4px;gap:0}
+}
