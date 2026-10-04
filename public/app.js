@@ -49,25 +49,19 @@ if (floatingHeader) {
 // Native playback avoids scroll-driven decoding on mobile devices.
 const film = document.querySelector('.highlight-film');
 if (film) {
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  let userPaused = false;
   film.muted = true;
   film.defaultMuted = true;
   film.autoplay = true;
   film.playsInline = true;
-  const play = () => { if (!reduced.matches && !userPaused && !document.hidden) film.play().catch(() => {}); };
+  const play = () => { film.play().catch(() => {}); };
   film.addEventListener('loadedmetadata', play, {once: true});
   film.addEventListener('canplay', play, {once: true});
-  if (!reduced.matches) {
-    if (matchMedia('(max-width: 760px)').matches) {
-      film.src = film.dataset.mobile;
-      film.load();
-    }
-    play();
+  if (matchMedia('(max-width: 760px)').matches) {
+    film.src = film.dataset.mobile;
+    film.load();
   }
-  new IntersectionObserver(([entry]) => { if (entry.isIntersecting) play(); else film.pause(); }, {threshold: 0.05}).observe(film);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) film.pause(); else if (film.getBoundingClientRect().bottom > 0) play(); });
-  reduced.addEventListener('change', () => { if (reduced.matches) film.pause(); });
+  play();
+  film.addEventListener('pause', () => play());
 }
 const newsGrid = document.querySelector('#home-news-grid');
 if (newsGrid) fetch('news.json').then(r => r.json()).then(items => {
