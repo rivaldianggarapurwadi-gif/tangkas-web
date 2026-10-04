@@ -46,21 +46,29 @@ if (floatingHeader) {
   updateHeader();
 }
 
-// Native playback avoids scroll-driven decoding on mobile devices.
+// Native video playback keeps the reveal smooth and lets the final frame hold.
 const film = document.querySelector('.highlight-film');
 if (film) {
+  film.muted = true;
+  film.defaultMuted = true;
+  film.autoplay = true;
+  film.playsInline = true;
   const mobile = matchMedia('(max-width: 760px)').matches;
-  const pattern = mobile ? film.dataset.mobilePattern : film.dataset.framePattern;
-  const step = mobile ? 2 : 1;
-  const first = 18, last = 144, fps = 18;
-  let frame = first, timer = 0, active = false;
-  const show = n => { frame = n; film.src = pattern.replace('{index}', String(n).padStart(4, '0')); };
-  const stop = () => { if (timer) clearInterval(timer); timer = 0; active = false; };
-  const play = () => { if (active) return; active = true; timer = setInterval(() => { if (frame >= last) return stop(); show(Math.min(last, frame + step)); }, 1000 / fps); };
-  show(first); play();
+  const source = mobile ? film.dataset.mobile : film.dataset.desktop;
+  if (film.getAttribute('src') !== source) {
+    film.src = source;
+    film.load();
+  }
+  const play = () => film.play().catch(() => {});
+  play();
+  film.addEventListener('loadedmetadata', play, {once: true});
+  film.addEventListener('canplay', play, {once: true});
   const heroObserver = new IntersectionObserver(([entry]) => {
-    if (!entry.isIntersecting) return stop();
-    stop(); show(first);
+    if (!entry.isIntersecting) {
+      film.pause();
+      return;
+    }
+    if (film.ended) film.currentTime = 0;
     play();
   }, {threshold: 0.35});
   heroObserver.observe(document.querySelector('.highlight-hero'));

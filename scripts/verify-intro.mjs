@@ -12,9 +12,12 @@ if (html.includes('highlight-home')) {
   assert.equal(doc.querySelector('script[src="intro.bundle.js"]'), null);
   assert.equal(doc.querySelector('.scroll-story'), null);
   const film = doc.querySelector('.highlight-film');
-  assert.equal(film.tagName, 'IMG');
+  assert.equal(film.tagName, 'VIDEO');
   assert.equal(doc.querySelector('.film-toggle'), null);
-  assert.equal(film.getAttribute('src'), 'assets/frames/frame-0018.webp');
+  assert.equal(film.getAttribute('src'), 'assets/tngks-scroll.mp4');
+  assert.equal(film.hasAttribute('muted'), true);
+  assert.equal(film.hasAttribute('playsinline'), true);
+  assert.equal(film.hasAttribute('autoplay'), true);
   assert.ok(doc.querySelector('link[rel="stylesheet"][href="cinematic.css"]'));
   assert.equal(doc.querySelectorAll('.header nav a').length, 5);
   const news = JSON.parse(await readFile('public/news.json', 'utf8'));
