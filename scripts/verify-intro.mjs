@@ -15,6 +15,7 @@ if (html.includes('highlight-home')) {
   assert.ok(film.hasAttribute('muted') && film.hasAttribute('playsinline') && !film.hasAttribute('loop'));
   assert.equal(doc.querySelector('.film-toggle'), null);
   assert.equal(film.getAttribute('src'), 'assets/tngks-scroll.mp4');
+  assert.ok(doc.querySelector('link[rel="stylesheet"][href="cinematic.css"]'));
   assert.equal(doc.querySelectorAll('.header nav a').length, 5);
   const news = JSON.parse(await readFile('public/news.json', 'utf8'));
   for (const item of news) assert.ok((await readFile('public/' + item.image)).length > 1000);
