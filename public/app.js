@@ -61,7 +61,12 @@ if (film) {
     film.load();
   }
   play();
-  film.addEventListener('pause', () => play());
+  const heroObserver = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting) return;
+    if (film.ended) film.currentTime = 0;
+    play();
+  }, {threshold: 0.35});
+  heroObserver.observe(document.querySelector('.highlight-hero'));
 }
 const newsGrid = document.querySelector('#home-news-grid');
 if (newsGrid) fetch('news.json').then(r => r.json()).then(items => {

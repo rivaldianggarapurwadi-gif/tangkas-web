@@ -12,7 +12,7 @@ if (html.includes('highlight-home')) {
   assert.equal(doc.querySelector('script[src="intro.bundle.js"]'), null);
   assert.equal(doc.querySelector('.scroll-story'), null);
   const film = doc.querySelector('.highlight-film');
-  assert.ok(film.hasAttribute('muted') && film.hasAttribute('playsinline') && film.hasAttribute('loop'));
+  assert.ok(film.hasAttribute('muted') && film.hasAttribute('playsinline') && !film.hasAttribute('loop'));
   assert.equal(doc.querySelector('.film-toggle'), null);
   assert.equal(film.getAttribute('src'), 'assets/tngks-scroll.mp4');
   assert.equal(doc.querySelectorAll('.header nav a').length, 5);
