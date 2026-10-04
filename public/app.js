@@ -59,8 +59,10 @@ if (film) {
   film.addEventListener('loadedmetadata', play, {once: true});
   film.addEventListener('canplay', play, {once: true});
   if (!reduced.matches) {
-    film.src = matchMedia('(max-width: 760px)').matches ? film.dataset.mobile : film.dataset.desktop;
-    film.load();
+    if (matchMedia('(max-width: 760px)').matches) {
+      film.src = film.dataset.mobile;
+      film.load();
+    }
     play();
   }
   new IntersectionObserver(([entry]) => { if (entry.isIntersecting) play(); else film.pause(); }, {threshold: 0.05}).observe(film);
