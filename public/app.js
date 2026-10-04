@@ -28,7 +28,10 @@ if (floatingHeader) {
   let headerFrame = 0;
   const updateHeader = () => {
     headerFrame = 0;
-    const scrolled = window.scrollY > 40;
+    const hero = document.querySelector('.highlight-hero');
+    const scrolled = hero ? hero.getBoundingClientRect().bottom <= 1 : window.scrollY > 40;
+    floatingHeader.classList.toggle('nav-visible', scrolled);
+    if (hero) { floatingHeader.inert = !scrolled; if (!scrolled) { menu.setAttribute('aria-expanded', 'false'); $('#mobile-nav').hidden = true; } }
     const baseline = floatingHeader.getBoundingClientRect().height / 2;
     const dark = darkSections.some(section => {
       const rect = section.getBoundingClientRect();
@@ -42,3 +45,30 @@ if (floatingHeader) {
   window.addEventListener('resize', queueHeader);
   updateHeader();
 }
+
+// Native playback avoids scroll-driven decoding on mobile devices.
+const film = document.querySelector('.highlight-film');
+if (film) {
+  const toggle = document.querySelector('.film-toggle');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  let userPaused = false;
+  const play = () => { if (!reduced.matches && !userPaused && !document.hidden) film.play().catch(() => {}); };
+  if (!reduced.matches) { toggle.hidden = false; toggle.textContent = 'Putar video'; film.src = matchMedia('(max-width: 760px)').matches ? film.dataset.mobile : film.dataset.desktop; play(); }
+  film.addEventListener('playing', () => { toggle.hidden = false; toggle.textContent = 'Jeda video'; });
+  film.addEventListener('pause', () => { toggle.textContent = 'Putar video'; });
+  toggle.addEventListener('click', () => { userPaused = !film.paused; if (userPaused) film.pause(); else play(); });
+  new IntersectionObserver(([entry]) => { if (entry.isIntersecting) play(); else film.pause(); }, {threshold: 0.05}).observe(film);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) film.pause(); else if (film.getBoundingClientRect().bottom > 0) play(); });
+  reduced.addEventListener('change', () => { if (reduced.matches) film.pause(); });
+}
+const newsGrid = document.querySelector('#home-news-grid');
+if (newsGrid) fetch('news.json').then(r => r.json()).then(items => {
+  for (const item of items.slice(0, 3)) {
+    const link = document.createElement('a'); link.className = 'news-card'; link.href = item.url; link.target = '_blank'; link.rel = 'noopener';
+    const image = document.createElement('img'); image.src = item.image; image.alt = item.title; image.loading = 'lazy'; image.width = 800; image.height = 533;
+    const meta = document.createElement('div'); meta.className = 'news-meta'; meta.textContent = `${item.publisher} · ${item.year}`;
+    const title = document.createElement('h3'); title.textContent = item.title;
+    const read = document.createElement('span'); read.className = 'news-read'; read.textContent = 'Baca berita';
+    link.append(image, meta, title, read); newsGrid.append(link);
+  }
+}).catch(() => { newsGrid.textContent = 'Baca berita Tangkas di halaman Cerita.'; });

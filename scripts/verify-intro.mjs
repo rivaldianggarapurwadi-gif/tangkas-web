@@ -5,6 +5,22 @@ import {JSDOM, VirtualConsole} from 'jsdom';
 // Exercise the shipped React bundle's escape paths without changing OS settings.
 const html = await readFile('public/index.html', 'utf8');
 const bundle = await readFile('public/intro.bundle.js', 'utf8');
+if (html.includes('highlight-home')) {
+  const doc = new JSDOM(html).window.document;
+  assert.ok(doc.querySelector('.highlight-hero .hero-brand'));
+  assert.ok(doc.querySelector('.highlight-copy h1'));
+  assert.equal(doc.querySelector('script[src="intro.bundle.js"]'), null);
+  assert.equal(doc.querySelector('.scroll-story'), null);
+  const film = doc.querySelector('.highlight-film');
+  assert.ok(film.hasAttribute('muted') && film.hasAttribute('playsinline') && film.hasAttribute('loop'));
+  assert.equal(film.hasAttribute('src'), false);
+  assert.equal(doc.querySelectorAll('.header nav a').length, 5);
+  const news = JSON.parse(await readFile('public/news.json', 'utf8'));
+  for (const item of news) assert.ok((await readFile('public/' + item.image)).length > 1000);
+  console.log('Passed: centered film hero, deferred video, preserved navigation, and nine news photographs.');
+  process.exit(0);
+}
+
 const waitFor = async predicate => {
   for (let i = 0; i < 100; i++) {
     if (predicate()) return;

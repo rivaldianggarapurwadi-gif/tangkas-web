@@ -215,3 +215,24 @@ html.lenis,html.lenis body{height:auto}
  .cinematic-home .hero-description{line-height:1.5;margin-bottom:6px}
  .cinematic-home .hero-actions{margin-top:4px;gap:0}
 }
+
+/* Film-led landing page: one centered composition, native video playback. */
+.highlight-home #intro-root{display:none}
+.highlight-home>.header{opacity:0;visibility:hidden;pointer-events:none;transform:translate3d(0,-100%,0);transition:transform .45s ease,opacity .45s ease,visibility .45s}
+.highlight-home>.header.nav-visible{opacity:1;visibility:visible;pointer-events:auto;transform:translate3d(0,0,0);background:#fffffff5;border-bottom:1px solid #11131014;color:#111310}
+.highlight-home>.header.nav-visible nav a,.highlight-home>.header.nav-visible .menu-toggle{color:#111310;text-shadow:none}
+.highlight-home>.header.nav-visible .brand{text-shadow:none}
+.highlight-hero{position:relative;isolation:isolate;min-height:640px;height:100svh;overflow:hidden;background:#090b0a;color:#fff;display:grid;place-items:center;padding:150px 24px 100px;text-align:center}
+.highlight-film,.highlight-shade{position:absolute;inset:0;width:100%;height:100%;z-index:-2;object-fit:cover}
+.highlight-shade{z-index:-1;background:linear-gradient(180deg,#0009,#0007 35%,#0009 78%,#000c)}
+.highlight-hero .hero-brand{position:absolute;top:40px;left:50%;transform:translateX(-50%);color:#fff;white-space:nowrap;font-size:23px}
+.highlight-copy{max-width:780px}
+.highlight-copy .eyebrow{font-size:12px;letter-spacing:2px;margin-bottom:24px;color:#eeeee9}
+.highlight-copy h1{font-size:clamp(58px,7.5vw,112px);line-height:1.02;letter-spacing:-.02em;margin:0 0 24px}
+.highlight-copy h1 em{color:#fff}
+.highlight-copy>p:not(.eyebrow){color:#f1f0e9;font-size:16px;line-height:1.65;margin-bottom:32px}
+.highlight-copy .button{background:#fff;border-color:#fff;color:#111310;justify-content:center;min-width:250px;font-size:13px;letter-spacing:.4px}
+.highlight-scroll{position:absolute;bottom:36px;font-size:11px;letter-spacing:1.4px;color:#fff}
+.film-toggle{position:absolute;right:30px;bottom:30px;padding:10px 14px;border:1px solid #ffffff70;color:#fff;background:#0005;font-size:11px;min-height:44px}
+@media(max-width:760px){.highlight-hero{min-height:580px;padding:120px 24px 110px}.highlight-hero .hero-brand{top:28px;font-size:20px}.highlight-copy h1{font-size:clamp(48px,11.5vw,78px)}.highlight-copy>p:not(.eyebrow){font-size:14px;max-width:34ch;margin-inline:auto}.highlight-copy .eyebrow{font-size:10px;letter-spacing:1px}.highlight-scroll{left:24px;bottom:34px;font-size:9px}.film-toggle{right:20px;bottom:22px}.highlight-film{object-position:center}.highlight-copy .button{min-width:220px}}
+@media(prefers-reduced-motion:reduce){.highlight-home>.header{transition:none}.highlight-film{object-fit:cover}}

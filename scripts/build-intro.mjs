@@ -11,7 +11,7 @@ let html = await readFile(homepage, 'utf8');
 html = html.replaceAll(/assets\/x7-scroll-(?:final|clean)\.mp4/g, 'assets/tngks-scroll.mp4');
 html = html.replace(' poster="assets/x7-front.png"', '');
 html = html.replace(/<script>if\(!matchMedia[\s\S]*?<\/script>/, '');
-if (!html.includes('class="hero-scroll-video"')) {
+if (!html.includes('highlight-home') && !html.includes('class="hero-scroll-video"')) {
   html = html.replace(
     '<div class="hero-media">',
     '<div class="hero-media"><video id="sequence" class="hero-scroll-video" src="assets/x7-scroll-final.mp4" poster="assets/x7-front.png" muted playsinline preload="auto" aria-hidden="true"></video>'
