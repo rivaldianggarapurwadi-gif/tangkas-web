@@ -51,8 +51,18 @@ const film = document.querySelector('.highlight-film');
 if (film) {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   let userPaused = false;
+  film.muted = true;
+  film.defaultMuted = true;
+  film.autoplay = true;
+  film.playsInline = true;
   const play = () => { if (!reduced.matches && !userPaused && !document.hidden) film.play().catch(() => {}); };
-  if (!reduced.matches) { film.src = matchMedia('(max-width: 760px)').matches ? film.dataset.mobile : film.dataset.desktop; play(); }
+  film.addEventListener('loadedmetadata', play, {once: true});
+  film.addEventListener('canplay', play, {once: true});
+  if (!reduced.matches) {
+    film.src = matchMedia('(max-width: 760px)').matches ? film.dataset.mobile : film.dataset.desktop;
+    film.load();
+    play();
+  }
   new IntersectionObserver(([entry]) => { if (entry.isIntersecting) play(); else film.pause(); }, {threshold: 0.05}).observe(film);
   document.addEventListener('visibilitychange', () => { if (document.hidden) film.pause(); else if (film.getBoundingClientRect().bottom > 0) play(); });
   reduced.addEventListener('change', () => { if (reduced.matches) film.pause(); });

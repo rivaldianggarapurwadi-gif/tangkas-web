@@ -1,0 +1,10 @@
+{
+  "jobId": "52e29e45-2f1e-4f6e-916d-e1cb368f5f47",
+  "model": "seedance_2_0",
+  "resolution": "4k",
+  "duration": 12,
+  "purpose": "Replace the source dissolve and the subsequent hard cut with a continuous single-camera orbit.",
+  "status": "completed-and-installed",
+  "resultUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_3F9o1PmW3tSuz8aAfmoY9DXQG6c/hf_20261001_125720_52e29e45-2f1e-4f6e-916d-e1cb368f5f47.mp4",
+  "verificationRequired": "Inspect all frames for ghosting, cuts, geometry changes before replacing the hero asset. Convert to H.264 with independent frames for scroll seeking."
+}
