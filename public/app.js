@@ -49,21 +49,18 @@ if (floatingHeader) {
 // Native playback avoids scroll-driven decoding on mobile devices.
 const film = document.querySelector('.highlight-film');
 if (film) {
-  film.muted = true;
-  film.defaultMuted = true;
-  film.autoplay = true;
-  film.playsInline = true;
-  const play = () => { film.play().catch(() => {}); };
-  film.addEventListener('loadedmetadata', play, {once: true});
-  film.addEventListener('canplay', play, {once: true});
-  if (matchMedia('(max-width: 760px)').matches) {
-    film.src = film.dataset.mobile;
-    film.load();
-  }
-  play();
+  const mobile = matchMedia('(max-width: 760px)').matches;
+  const pattern = mobile ? film.dataset.mobilePattern : film.dataset.framePattern;
+  const step = mobile ? 2 : 1;
+  const first = 18, last = 144, fps = 18;
+  let frame = first, timer = 0, active = false;
+  const show = n => { frame = n; film.src = pattern.replace('{index}', String(n).padStart(4, '0')); };
+  const stop = () => { if (timer) clearInterval(timer); timer = 0; active = false; };
+  const play = () => { if (active) return; active = true; timer = setInterval(() => { if (frame >= last) return stop(); show(Math.min(last, frame + step)); }, 1000 / fps); };
+  show(first); play();
   const heroObserver = new IntersectionObserver(([entry]) => {
-    if (!entry.isIntersecting) return;
-    if (film.ended) film.currentTime = 0;
+    if (!entry.isIntersecting) return stop();
+    stop(); show(first);
     play();
   }, {threshold: 0.35});
   heroObserver.observe(document.querySelector('.highlight-hero'));
