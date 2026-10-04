@@ -13,6 +13,7 @@ if (html.includes('highlight-home')) {
   assert.equal(doc.querySelector('.scroll-story'), null);
   const film = doc.querySelector('.highlight-film');
   assert.ok(film.hasAttribute('muted') && film.hasAttribute('playsinline') && film.hasAttribute('loop'));
+  assert.equal(doc.querySelector('.film-toggle'), null);
   assert.equal(film.hasAttribute('src'), false);
   assert.equal(doc.querySelectorAll('.header nav a').length, 5);
   const news = JSON.parse(await readFile('public/news.json', 'utf8'));

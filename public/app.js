@@ -49,14 +49,10 @@ if (floatingHeader) {
 // Native playback avoids scroll-driven decoding on mobile devices.
 const film = document.querySelector('.highlight-film');
 if (film) {
-  const toggle = document.querySelector('.film-toggle');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   let userPaused = false;
   const play = () => { if (!reduced.matches && !userPaused && !document.hidden) film.play().catch(() => {}); };
-  if (!reduced.matches) { toggle.hidden = false; toggle.textContent = 'Putar video'; film.src = matchMedia('(max-width: 760px)').matches ? film.dataset.mobile : film.dataset.desktop; play(); }
-  film.addEventListener('playing', () => { toggle.hidden = false; toggle.textContent = 'Jeda video'; });
-  film.addEventListener('pause', () => { toggle.textContent = 'Putar video'; });
-  toggle.addEventListener('click', () => { userPaused = !film.paused; if (userPaused) film.pause(); else play(); });
+  if (!reduced.matches) { film.src = matchMedia('(max-width: 760px)').matches ? film.dataset.mobile : film.dataset.desktop; play(); }
   new IntersectionObserver(([entry]) => { if (entry.isIntersecting) play(); else film.pause(); }, {threshold: 0.05}).observe(film);
   document.addEventListener('visibilitychange', () => { if (document.hidden) film.pause(); else if (film.getBoundingClientRect().bottom > 0) play(); });
   reduced.addEventListener('change', () => { if (reduced.matches) film.pause(); });
